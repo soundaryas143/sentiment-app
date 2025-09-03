@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  sentiment-app:
+    image: sentiment-app:latest
+    build: .
+    container_name: sentiment-app
+    ports:
+      - "5000:5000"
+    restart: always
