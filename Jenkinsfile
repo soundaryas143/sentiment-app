@@ -1,34 +1,26 @@
 pipeline {
     agent any
 
+    environment {
+        APP_NAME = "sentiment-app"
+        IMAGE_NAME = "sentiment-app:latest"
+    }
+
     stages {
         stage('Build Docker Image') {
             steps {
-                script {
-                    echo "🔨 Building Docker image..."
-                    sh 'docker build -t sentiment-app:latest .'
-                }
+                echo "Building Docker image..."
+                sh "docker build -t ${IMAGE_NAME} ."
             }
         }
 
-        stage('Run Docker Container') {
+        stage('Run Container') {
             steps {
-                script {
-                    echo "🚀 Running container..."
-                    // Stop old container if it exists
-                    sh 'docker stop sentiment-container || true && docker rm sentiment-container || true'
-                    // Run new container
-                    sh 'docker run -d -p 5000:5000 --name sentiment-container sentiment-app:latest'
-                }
-            }
-        }
-
-        stage('Verify') {
-            steps {
-                script {
-                    echo "✅ Checking running containers..."
-                    sh 'docker ps'
-                }
+                echo "Running container..."
+                // Stop old container if already running
+                sh "docker rm -f ${APP_NAME} || true"
+                // Run new container on port 5002
+                sh "docker run -d -p 5002:5002 --name ${APP_NAME} ${IMAGE_NAME}"
             }
         }
     }
